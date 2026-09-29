@@ -276,3 +276,7 @@ def build_graph():
 
 - 본 문서는 **하네스/오케스트레이션 레이어** 설계를 위한 것이며, 각 AI 모델의 내부 구현(예: ControlNet 파이프라인의 디테일)은 다루지 않는다.
 - DB 스키마, 인증, 결제(토큰 차감)는 별도 문서.
+
+## 로컬 mock 검증 (2026-09-29)
+
+`LLM_PROVIDER=fake`와 `IMAGE_PROVIDER=mock`으로 기존 비동기 파이프라인과 S3를 검증할 수 있다. mock 이미지는 고정 진단 PNG이며 C6의 모델 출력 품질 검증 대상이 아니다. 실행 및 제한: [local-character-mock.md](../../local-character-mock.md). 현재 그래프의 실제 노드는 `agents/character_creation/pipeline.py`와 갱신된 `architecture.mmd`를 기준으로 한다.

@@ -161,3 +161,7 @@ agents/{feature}/
 - DB 스키마: [`./DATA_MODEL.md`](./DATA_MODEL.md)
 - 라우팅 허브: [`../CLAUDE.md`](../CLAUDE.md)
 - 팀 공유 변경 로그: [`../CHANGELOG.md`](../CHANGELOG.md)
+
+### 로컬 캐릭터 검증 모드 (2026-09-29)
+
+캐릭터 파이프라인의 provider 경계에 `IMAGE_PROVIDER=mock`을 추가했다. 기존 fake persona와 함께 GPU 없이 비동기 job/S3/입주를 검증한다. 전체 AI 기능 mock이나 운영 모델 완성 판정은 아니다. [실행 방법](local-character-mock.md). 기존 FE/BE/API 계약은 동일하다.

@@ -18,7 +18,7 @@ _VALID_QUEST_LLM_PROVIDERS = ("qwen", "runpod", "fake")
 _VALID_FEED_LLM_PROVIDERS = ("qwen", "runpod", "fake")
 _VALID_LLM_PROVIDERS = ("qwen", "runpod", "fake")
 _VALID_STRUCTURED_MODES = ("vllm", "openai")
-_VALID_IMAGE_PROVIDERS = ("local", "runpod")
+_VALID_IMAGE_PROVIDERS = ("local", "runpod", "mock")
 _LOCAL_FASTAPI_QWEN_BASE_URLS = (
     "http://localhost:8000/v1",
     "http://127.0.0.1:8000/v1",
