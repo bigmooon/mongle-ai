@@ -154,10 +154,15 @@ def _get_image_generator(request: Request):
 
     runpod: 원격 RunPod Serverless 워커 호출 (GPU 불필요)
     local: 로컬 LoRA 디퓨전 파이프라인 로드 (GPU 권장)
+    mock: 네트워크/GPU 없이 고정 진단 PNG 반환 (캐릭터 검증 전용)
     """
     if request.app.state.image_generator is None:
         cfg: AppConfig = request.app.state.config
-        if cfg.image_provider == "runpod":
+        if cfg.image_provider == "mock":
+            from adapters.character_creation.mock_image import MockImageGenerator
+
+            request.app.state.image_generator = MockImageGenerator()
+        elif cfg.image_provider == "runpod":
             from adapters.character_creation.runpod_image import RunPodImageGenerator
 
             if not cfg.runpod_image_endpoint_url:

@@ -15,6 +15,7 @@
 ## [Unreleased]
 
 ### Added
+- **로컬 캐릭터 mock provider**: `IMAGE_PROVIDER=mock`으로 외부 호출/GPU 없이 유효한 진단 PNG를 반환한다. 기존 `LLM_PROVIDER=fake`와 실제 S3를 조합하여 비동기 생성·polling·입주 연결을 검증할 수 있다. 기존 provider 기본값과 인증/스토리지 검증은 유지한다. 실행 범위와 절차는 `docs/local-character-mock.md` 참고.
 - **Planner Runtime V2 격리 학습 키트**: 기존 planner LoRA·구형 `kind/phases` 데이터를 유지한 채,
   현재 `summary_text/personalization_patch/days` 계약만 학습하는 결정론적 300건 데이터셋과
   생성기, RunPod 전용 학습 스크립트, 20개 holdout 승격 평가기를 추가했다. 신규 출력은
