@@ -5,7 +5,6 @@
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2-1C3C3C)](https://langchain-ai.github.io/langgraph/)
-[![API tests](https://github.com/bigmooon/mongle-ai/actions/workflows/api-tests.yml/badge.svg)](https://github.com/bigmooon/mongle-ai/actions/workflows/api-tests.yml)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/bigmooon/mongle-web/main/public/assets/tutorial/village.png" alt="몽글마을 메인 화면" width="88%" />
@@ -90,7 +89,7 @@ flowchart TB
 | VLM 객체·색상 인식 | 20/20 · 20/20 |
 | 피드 이미지 생성 성공 | 19/20 |
 
-현재 CI는 외부 모델이 필요한 contract 테스트를 제외하고 `agents`, `adapters`, `api` 테스트와 80% 커버리지 게이트를 실행합니다.
+CI workflow는 외부 모델이 필요한 contract 테스트를 제외하고 `agents`, `adapters`, `api` 테스트와 80% 커버리지 게이트를 실행하도록 구성되어 있습니다.
 
 ## 빠른 시작
 
