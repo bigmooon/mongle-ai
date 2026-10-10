@@ -72,6 +72,17 @@ flowchart LR
 
 에이전트는 도메인 검증과 결과 생성을 담당하고, 영속화·카운터·이벤트 발행은 호출자가 담당하도록 경계를 나눴습니다. 자세한 제품·데이터 계약은 [`docs/`](docs/)에서 확인할 수 있습니다.
 
+## 관련 설계 문서
+
+| 문서 | 확인할 수 있는 내용 |
+| --- | --- |
+| [시스템 아키텍처](https://drive.google.com/file/d/15p49ZUIrJCmrSCy3LpU3FbjapZaMXdRc/view) | Web·Server·AI 간 구성과 배포 경계 |
+| [모델 테스트 계획 및 결과](https://drive.google.com/file/d/1tozTGjdvfpLf77Z2kIV1dezihjXp5j8Q/view) | 후보 모델 비교 기준과 평가 결과 |
+| [인공지능 학습 결과](https://drive.google.com/file/d/1HbuCap2QbnE1OPwZdbhJJ3A1_DMbDImX/view) | 학습 과정과 실험 결과 |
+| [AI 데이터 전처리 결과](https://drive.google.com/file/d/1Pxsk397u0joC_Bp-wbrbsc3p86MU6oar/view) | 데이터 정제·가공 과정 |
+
+[전체 프로젝트 산출물 보기](https://drive.google.com/drive/folders/1Lfv49TDbilo4ivoSIpw4v8RDEnEw9quC)
+
 ## 평가 결과
 
 아래 수치는 **프로젝트 제출 당시 평가 환경**의 결과입니다. 이후 모델과 파이프라인이 변경되었으므로 현재 운영 성능으로 일반화하지 않습니다.
