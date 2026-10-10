@@ -13,11 +13,13 @@
 
 ## 프로젝트 개요
 
-기존 TODO 앱은 계획을 적는 데는 도움을 주지만, 계획을 시작하고 지속할 정서적 동기를 만들기는 어렵습니다. 몽글마을은 사용자의 애착 인형을 AI 주민으로 만들고, 자연어 목표를 일정과 TODO로 구체화한 뒤 캐릭터 퀘스트와 피드로 연결합니다.
+**내일도와줘, 몽글마을**은 자기관리를 시작하고 싶지만 계획을 세우거나 꾸준히 실천하기 어려운 20~30대를 위한 서비스입니다. 나의 애착 인형을 픽셀 마을의 AI 주민으로 만들고, 자연어로 이야기한 목표를 실행할 TODO로 구체화합니다.
 
-- **대상 사용자**: 계획 수립과 꾸준한 실천에 어려움을 겪는 20~30대
-- **핵심 경험**: 목표 입력 → TODO 구체화 → 캐릭터 퀘스트 → 완료 보상 → AI 피드
-- **AI 서비스의 역할**: 구조화된 계획, 캐릭터 페르소나, 퀘스트, 이미지·캡션 및 답글 생성
+사용자는 계획을 확인하고 저장한 뒤, 자신의 할 일과 연결된 주민의 퀘스트를 함께 수행합니다. 퀘스트와 연결된 TODO를 완료하면 사과 토큰을 받고, 주민의 이미지·글이 담긴 개인 피드가 생성됩니다. 여기에 캘린더, 집중을 돕는 포모도로, 하루를 돌아보는 회고를 더해 **계획 → 실천 → 성취 기록**을 하나의 마을에서 경험하도록 구성했습니다.
+
+몽글마을은 나만의 캐릭터와 작은 실천을 쌓으며 다시 찾아오고 싶은 자기관리 경험을 목표로 합니다. 대상 사용자와 제품의 출발점은 [프로젝트 기획서의 「핵심 목표·주요 고객」](https://drive.google.com/file/d/1AT0YGK2BfbWJpBcsvgHfugAlRHEdQTak/view)에 정리되어 있습니다.
+
+AI는 사용자의 입력을 서비스에서 활용할 수 있는 생성 결과로 바꿉니다. 자연어 목표에서 구조화된 계획을 만들고, 캐릭터의 페르소나·퀘스트·이미지·캡션·답글을 생성합니다. FastAPI가 추론 요청을 받아 에이전트와 모델 어댑터를 실행하고, 결과의 저장과 사용자별 보상 처리는 Server에 맡깁니다.
 
 | 영역 | 저장소 | 역할 |
 | --- | --- | --- |
@@ -25,13 +27,33 @@
 | Server | [mongle-server](https://github.com/bigmooon/mongle-server) | 인증·도메인 API·비동기 작업 관리 |
 | AI | **현재 저장소** | LLM/VLM 에이전트와 FastAPI 추론 API |
 
+## 문제 정의와 리서치 근거
+
+기획서가 주목한 문제는 **자기관리의 의욕이 실제 시작과 지속으로 이어지기 어렵다는 점**입니다. 하고 싶은 일은 있어도 무엇부터 해야 할지 막막하고, 계획을 세운 뒤에도 혼자 반복하는 과정에서 흥미를 잃기 쉽습니다. 기획서에서는 이러한 어려움을 목표 구체화, 피드백, 보상과 연결해 풀고자 했습니다. [문제 정의와 서비스 필요성](https://drive.google.com/file/d/1AT0YGK2BfbWJpBcsvgHfugAlRHEdQTak/view)
+
+몽글마을은 **쉽게 시작하기**와 **꾸준히 돌아오기**에 초점을 맞췄습니다. AI 플래너와 대화하며 목표를 작은 할 일로 나누고, 사용자가 확인한 계획부터 실천하도록 돕습니다. 여기에 애착 인형을 나만의 주민으로 만드는 경험과 퀘스트·사과 보상·주민 피드를 더했습니다. 내가 한 일을 캐릭터의 활동으로도 볼 수 있게 해, 다음 실천을 이어갈 동기를 만들고자 했습니다.
+
+![몽글마을의 기획 의도: 막막한 목표는 대화형 계획으로, 혼자 하는 실천은 나만의 주민과 함께, 작은 성취는 보상과 피드로 연결](docs/images/product-concept.svg)
+
+*프로젝트 기획서 1.3~1.4절과 2.1~2.3절을 바탕으로 재구성한 문제의식과 제품 접근입니다. 화면 구성은 [화면 설계서](https://drive.google.com/file/d/1YtJOZGWTRox2bAD4ejiBRfHChII9syMF/view), 사용 장면은 [시나리오 설계서](https://drive.google.com/file/d/1iEBtXu_PdO8v77O-_BnPvVMfbw2PgwJB/view)에서 확인할 수 있습니다.*
+
+기획 단계에서 참고한 외부 조사 결과는 아래와 같습니다. 조사 대상과 조건이 서로 다른 선행 자료이며, 몽글마을 사용자를 대상으로 측정한 결과는 아닙니다. 원문 출처 목록은 [프로젝트 기획서의 「출처」](https://drive.google.com/file/d/1AT0YGK2BfbWJpBcsvgHfugAlRHEdQTak/view)에 있습니다.
+
+| 관찰한 문제 | 조사 결과 | AI 설계에 반영한 방식 |
+| --- | --- | --- |
+| 시작 자체가 어렵다 | 귀찮음 **25.8%**, 무엇을 할지 모름 **24.4%**, 시간 부족 **21.7%** | 자연어 목표를 대화로 구체화하고 구조화된 TODO 후보 생성 |
+| 생산성 앱을 오래 쓰기 어렵다 | 생산성 앱 리텐션: 1일 **32.86% → 30일 9.63%** | 애착 인형 기반 주민과 페르소나별 퀘스트·피드·답글 생성 |
+| 루틴을 돕는 디지털 수요가 있다 | 챌린지·습관 앱 이용 **21.3%** | 사용자가 확인하고 저장할 수 있는 계획 초안 제공 |
+
+이 자료를 바탕으로 “목표 구체화와 캐릭터 기반 보상이 시작과 재방문에 도움이 될 것”이라는 제품 가설을 세웠습니다. 실제 효과는 TODO 생성·완료율, 1·7·30일 재방문율, 회고 참여율 등으로 검증할 과제입니다. 상황별 응원이나 TODO와 퀘스트의 연결 조건 등 기획과 현재 구현이 달라진 부분은 [설계·구현 대조 기록](docs/CROSS_REPOSITORY_REVIEW.md)에 구분했습니다.
+
 ## 사용자 흐름
 
 ```mermaid
 flowchart TB
     JOIN["로그인 · 주민 입주"]
     PLAN["목표 구체화 · TODO 확정"]
-    DO["퀘스트 연결 · 완료 보상"]
+    DO["퀘스트 연결<br/>완료 보상"]
     REVIEW["개인 피드 · 댓글 · 회고"]
     JOIN --> PLAN --> DO --> REVIEW
 ```
@@ -66,7 +88,7 @@ flowchart TB
 
 Pydantic 입력/출력 모델, 어댑터의 JSON 파싱·스키마 요청, 날짜·언어·길이 등 기능별 검증을 함께 사용합니다. 모든 경로가 동일한 모델이나 검증기를 사용하는 것은 아닙니다. 예를 들어 RunPod 플래너의 semantic validator는 `None`이며, `PLANNER_OPENAI_*`가 설정되면 플래너의 분류·후속 질문·검증·생성 경로를 별도 호환 API로 바꿉니다.
 
-근거: [api/deps.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/deps.py) · [api/config.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/config.py) · [adapters/todo_creation/qwen_llm.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/adapters/todo_creation/qwen_llm.py) · [agents/todo_creation/schemas.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/todo_creation/schemas.py)
+관련 코드: [api/deps.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/deps.py) · [api/config.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/config.py) · [adapters/todo_creation/qwen_llm.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/adapters/todo_creation/qwen_llm.py) · [agents/todo_creation/schemas.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/todo_creation/schemas.py)
 
 | 추론 구성 | 코드에서 확인한 선택지 |
 | --- | --- |
@@ -74,7 +96,7 @@ Pydantic 입력/출력 모델, 어댑터의 JSON 파싱·스키마 요청, 날�
 | 이미지·시각 분석 | 통합 이미지 워커의 image_character·text_character·feed 모드. SDXL·ControlNet·LoRA는 이미지 합성, Qwen VL 계열은 외형 분석 등에 사용; VLM 자체를 이미지 생성 모델이라고 부르지 않음 |
 | 로컬 검증 | 캐릭터 fake persona + mock 이미지 + local storage. TODO와 답글을 포함한 전체 제품 mock이 아님 |
 
-근거: [runpod_workers/llm/Dockerfile](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/runpod_workers/llm/Dockerfile) · [.github/workflows/deploy-workers.yml](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/.github/workflows/deploy-workers.yml) · [runpod_workers/image_gen/handler.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/runpod_workers/image_gen/handler.py) · [runpod_workers/image_gen/model_refs.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/runpod_workers/image_gen/model_refs.py) · [runpod_workers/image_gen/pipelines/image_character/mascot_stage.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/runpod_workers/image_gen/pipelines/image_character/mascot_stage.py) · [api/deps.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/deps.py)
+관련 코드: [runpod_workers/llm/Dockerfile](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/runpod_workers/llm/Dockerfile) · [.github/workflows/deploy-workers.yml](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/.github/workflows/deploy-workers.yml) · [runpod_workers/image_gen/handler.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/runpod_workers/image_gen/handler.py) · [runpod_workers/image_gen/model_refs.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/runpod_workers/image_gen/model_refs.py) · [runpod_workers/image_gen/pipelines/image_character/mascot_stage.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/runpod_workers/image_gen/pipelines/image_character/mascot_stage.py) · [api/deps.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/deps.py)
 
 ### 메모리·재시도·복구 범위
 
@@ -82,7 +104,7 @@ Pydantic 입력/출력 모델, 어댑터의 JSON 파싱·스키마 요청, 날�
 
 캐릭터 persona/source 업로드는 LangGraph RetryPolicy, 이미지·생성 업로드는 해당 노드의 재시도/정리 로직을 사용합니다. 피드는 이미지·S3·캡션의 특정 예외에 최대 3시도를 적용하고, 퀘스트는 실패 항목을 `skipped`로 반환합니다. 제품의 재처리·보상은 Django 정책과 함께 봐야 합니다.
 
-근거: [api/character_creation/jobs.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/character_creation/jobs.py) · [api/todo_creation/jobs.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/todo_creation/jobs.py) · [api/quest_generation/router.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/quest_generation/router.py) · [agents/todo_creation/planner/graph.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/todo_creation/planner/graph.py) · [agents/character_creation/pipeline.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/character_creation/pipeline.py) · [agents/character_creation/nodes/image_generator.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/character_creation/nodes/image_generator.py) · [agents/character_creation/nodes/generated_upload.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/character_creation/nodes/generated_upload.py) · [agents/feed_generation/pipeline.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/feed_generation/pipeline.py) · [apps/characters/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/characters/tasks.py)
+관련 코드: [api/character_creation/jobs.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/character_creation/jobs.py) · [api/todo_creation/jobs.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/todo_creation/jobs.py) · [api/quest_generation/router.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/quest_generation/router.py) · [agents/todo_creation/planner/graph.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/todo_creation/planner/graph.py) · [agents/character_creation/pipeline.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/character_creation/pipeline.py) · [agents/character_creation/nodes/image_generator.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/character_creation/nodes/image_generator.py) · [agents/character_creation/nodes/generated_upload.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/character_creation/nodes/generated_upload.py) · [agents/feed_generation/pipeline.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/agents/feed_generation/pipeline.py) · [apps/characters/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/characters/tasks.py)
 
 ## 담당한 부분
 
@@ -113,7 +135,7 @@ AI는 Django가 전달한 입력을 구조화된 생성 결과로 반환하고, 
 flowchart TB
     WEB["Web<br/>React · Phaser"]
     SERVER["Server<br/>Django · Celery"]
-    AI["AI<br/>FastAPI · 추론 어댑터"]
+    AI["AI<br/>FastAPI · 추론"]
     DB["관계형 데이터<br/>MySQL"]
     MEDIA["이미지 객체<br/>S3"]
 
@@ -123,9 +145,11 @@ flowchart TB
     AI -->|생성 이미지 업로드| MEDIA
 ```
 
-이 그림은 요청·저장 방향을 요약합니다. **Web은 AI API를 직접 호출하지 않습니다.** 원본 사진은 Django가 발급한 presigned URL로 Web이 S3에 직접 PUT하며, Django는 이미지 키·메타데이터와 캐릭터 생성 감사 JSON을 관리합니다. AI가 결과를 HTTP 응답/폴링 결과로 반환하면 Django가 도메인 DB에 반영합니다. S3 정적 Web 배포와 미디어 객체 저장은 용도를 구분합니다. Redis는 Server의 Celery broker/result 및 인증 캐시이고, AI job·플래너 대화는 별도 메모리 상태입니다. 이 그림의 MySQL은 제품 DB 구성이며, Django 기본 settings는 DATABASE_URL 미설정 시 SQLite로 대체됩니다. [설정 근거](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/config/settings/base.py).
+Web의 AI 기능 요청은 Django를 거쳐 FastAPI로 전달됩니다. 원본 사진은 Django가 발급한 presigned URL로 Web이 S3에 직접 PUT하며, Django는 이미지 키·메타데이터와 캐릭터 생성 감사 JSON을 관리합니다. AI가 결과를 HTTP 응답/폴링 결과로 반환하면 Django가 도메인 DB에 반영합니다. S3는 Web 정적 파일 배포와 사용자 미디어 저장에 각각 사용합니다.
 
-근거: [src/shared/api/client.ts](https://github.com/bigmooon/mongle-web/blob/fcd2734b386035fca2d10980a1bb55ec8e90c4ba/src/shared/api/client.ts) · [src/features/character/api.ts](https://github.com/bigmooon/mongle-web/blob/fcd2734b386035fca2d10980a1bb55ec8e90c4ba/src/features/character/api.ts) · [apps/characters/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/characters/tasks.py) · [infrastructure/storage/s3.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/infrastructure/storage/s3.py) · [api/deps.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/deps.py)
+Redis는 Server의 Celery broker/result 및 인증 캐시이고, AI job·플래너 대화는 별도 메모리 상태입니다. 제품 DB는 MySQL을 사용하도록 구성되어 있고, Django 기본 설정에서는 `DATABASE_URL`을 지정하지 않으면 SQLite를 사용합니다. [설정 근거](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/config/settings/base.py).
+
+관련 코드: [src/shared/api/client.ts](https://github.com/bigmooon/mongle-web/blob/fcd2734b386035fca2d10980a1bb55ec8e90c4ba/src/shared/api/client.ts) · [src/features/character/api.ts](https://github.com/bigmooon/mongle-web/blob/fcd2734b386035fca2d10980a1bb55ec8e90c4ba/src/features/character/api.ts) · [apps/characters/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/characters/tasks.py) · [infrastructure/storage/s3.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/infrastructure/storage/s3.py) · [api/deps.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/deps.py)
 
 ### 작업별 통신 방식
 
@@ -139,17 +163,18 @@ flowchart TB
 
 Web → Django 경로에는 `/api/v1`을 앞에 붙입니다. 캐릭터의 Server job ID와 AI job ID는 서로 다르며, 플래너는 AI job ID를 중계합니다. **Submit/Poll이 곧 Celery 사용이나 영속 복구를 뜻하지는 않습니다.**
 
-근거: [apps/todos/views.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/todos/views.py) · [apps/todos/ai_client.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/todos/ai_client.py) · [apps/characters/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/characters/tasks.py) · [apps/posts/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/posts/tasks.py) · [api/todo_creation/router.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/todo_creation/router.py) · [api/quest_generation/router.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/quest_generation/router.py)
+관련 코드: [apps/todos/views.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/todos/views.py) · [apps/todos/ai_client.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/todos/ai_client.py) · [apps/characters/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/characters/tasks.py) · [apps/posts/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/posts/tasks.py) · [api/todo_creation/router.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/todo_creation/router.py) · [api/quest_generation/router.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/quest_generation/router.py)
 
 
-## 코드·설계 문서 대조 기준
+## 문서 기준과 변경 이력
 
-2026-10-10에 세 저장소의 기본 브랜치 코드·환경 변수 예시·Compose·CI·API 클라이언트·라우터와 Drive의 시스템 아키텍처·시스템 구성도·화면 설계서·시나리오 설계서를 대조했습니다. 코드 링크는 검토 당시 커밋으로 고정했습니다. 과거 설계와 현재 구현의 차이, 확인 불가 항목, 수정·검증 내역은 [교차검증 기록](docs/CROSS_REPOSITORY_REVIEW.md)에 남깁니다. 기존 리서치와 평가 수치는 보존하며 현재 운영 성능으로 새로 주장하지 않습니다.
+README는 2026-10-10에 확인한 코드와 환경 변수 예시, Compose, CI 설정을 기준으로 작성했습니다. 코드 링크는 당시 커밋을 가리킵니다. Drive 설계 자료와 달라진 부분, 확인이 필요한 항목과 검증 내역은 [교차검증 기록](docs/CROSS_REPOSITORY_REVIEW.md)에서 확인할 수 있습니다.
 
 ## 관련 설계 문서
 
 | 문서 | 확인할 수 있는 내용 |
 | --- | --- |
+| [프로젝트 기획서](https://drive.google.com/file/d/1AT0YGK2BfbWJpBcsvgHfugAlRHEdQTak/view) | 대상 사용자, 문제 정의와 제품 가설 |
 | [시스템 아키텍처](https://drive.google.com/file/d/15p49ZUIrJCmrSCy3LpU3FbjapZaMXdRc/view) | Web·Server·AI 간 구성과 배포 경계 |
 | [모델 테스트 계획 및 결과](https://drive.google.com/file/d/1tozTGjdvfpLf77Z2kIV1dezihjXp5j8Q/view) | 후보 모델 비교 기준과 평가 결과 |
 | [인공지능 학습 결과](https://drive.google.com/file/d/1HbuCap2QbnE1OPwZdbhJJ3A1_DMbDImX/view) | 학습 과정과 실험 결과 |
@@ -170,7 +195,7 @@ Web → Django 경로에는 `/api/v1`을 앞에 붙입니다. 캐릭터의 Serve
 | VLM 객체·색상 인식 | 20/20 · 20/20 |
 | 피드 이미지 생성 성공 | 19/20 |
 
-평가 조건 보충: LLM 표의 3.672는 7개 후보·5개 기능·총 50개 샘플 기준의 기존 Final 평균이며, 자동 점수 0.45 + GPT-5.5 judge 점수 0.55의 결합입니다. 속도나 현행 EXAONE/LoRA 성능을 나타내는 수치가 아닙니다. SSIM·VLM·피드 수치는 각각 원래 평가 과제의 결과로 유지하며 동일한 50개 LLM 표본의 결과로 합치지 않습니다. [LLM 평가 조건](llm_evaluation/llm-model-cost-summary.md), [제출 당시 모델 평가](https://drive.google.com/file/d/1tozTGjdvfpLf77Z2kIV1dezihjXp5j8Q/view), [학습 결과](https://drive.google.com/file/d/1HbuCap2QbnE1OPwZdbhJJ3A1_DMbDImX/view).
+평가 조건: LLM 표의 3.672는 7개 후보·5개 기능·총 50개 샘플 기준의 기존 Final 평균이며, 자동 점수 0.45 + GPT-5.5 judge 점수 0.55의 결합입니다. 속도나 현행 EXAONE/LoRA 성능을 나타내는 수치가 아닙니다. SSIM·VLM·피드 수치는 각각 별도의 평가 과제에서 얻은 결과이며, 50개 LLM 표본과는 평가 대상이 다릅니다. [LLM 평가 조건](llm_evaluation/llm-model-cost-summary.md), [제출 당시 모델 평가](https://drive.google.com/file/d/1tozTGjdvfpLf77Z2kIV1dezihjXp5j8Q/view), [학습 결과](https://drive.google.com/file/d/1HbuCap2QbnE1OPwZdbhJJ3A1_DMbDImX/view).
 
 CI workflow는 외부 모델이 필요한 contract 테스트를 제외하고 `agents`, `adapters`, `api` 테스트와 80% 커버리지 게이트를 실행하도록 구성되어 있습니다.
 
@@ -250,9 +275,9 @@ docs/            제품·데이터·기능별 설계 문서
 
 Server의 TODO·퀘스트는 `MONGLE_AI_API_BASE`/`MONGLE_AI_API_KEY`, 캐릭터·피드·답글은 `AI_SERVICE_URL`/`AI_SERVICE_TOKEN`을 사용합니다. 두 키는 연결할 AI의 `MONGLE_API_KEY`와 맞춰야 합니다. 컨테이너에서 호스트 AI에 연결할 때 loopback 대신 도달 가능한 호스트 주소를 설정해야 합니다.
 
-이 설명은 배포 **설정** 검증입니다. 실제 DNS·CloudFront origin·RDS 엔진 버전·RunPod 활성 모델·비밀 환경 변수는 저장소만으로 확정할 수 없습니다. Nginx 대기 제한(120초), Server AI 폴링 기본 예산(150초), Gunicorn 제한(180초)이 달라 동기 대기 경로의 타임아웃 위험도 남아 있습니다.
+배포 경로는 저장소의 Compose와 CI 설정을 기준으로 정리했습니다. 실제 DNS, CloudFront origin, RDS 엔진 버전, RunPod에서 사용 중인 모델과 비밀 환경 변수는 운영 환경에서 별도로 확인해야 합니다. Nginx 대기 제한(120초), Server AI 폴링 기본 예산(150초), Gunicorn 제한(180초)이 달라 동기 대기 경로의 타임아웃 위험도 남아 있습니다.
 
-근거: [.github/workflows/deploy-web.yml](https://github.com/bigmooon/mongle-web/blob/fcd2734b386035fca2d10980a1bb55ec8e90c4ba/.github/workflows/deploy-web.yml) · [vite.config.ts](https://github.com/bigmooon/mongle-web/blob/fcd2734b386035fca2d10980a1bb55ec8e90c4ba/vite.config.ts) · [.github/workflows/deploy-server.yml](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/.github/workflows/deploy-server.yml) · [nginx/api.conf](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/nginx/api.conf) · [Dockerfile](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/Dockerfile) · [.env.example](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/.env.example) · [.github/workflows/deploy-api.yml](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/.github/workflows/deploy-api.yml) · [.github/workflows/deploy-workers.yml](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/.github/workflows/deploy-workers.yml) · [docker-compose.yml](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/docker-compose.yml)
+관련 코드: [.github/workflows/deploy-web.yml](https://github.com/bigmooon/mongle-web/blob/fcd2734b386035fca2d10980a1bb55ec8e90c4ba/.github/workflows/deploy-web.yml) · [vite.config.ts](https://github.com/bigmooon/mongle-web/blob/fcd2734b386035fca2d10980a1bb55ec8e90c4ba/vite.config.ts) · [.github/workflows/deploy-server.yml](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/.github/workflows/deploy-server.yml) · [nginx/api.conf](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/nginx/api.conf) · [Dockerfile](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/Dockerfile) · [.env.example](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/.env.example) · [.github/workflows/deploy-api.yml](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/.github/workflows/deploy-api.yml) · [.github/workflows/deploy-workers.yml](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/.github/workflows/deploy-workers.yml) · [docker-compose.yml](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/docker-compose.yml)
 
 ## 한계와 다음 과제
 
