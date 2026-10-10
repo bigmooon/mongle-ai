@@ -25,18 +25,45 @@
 | Server | [mongle-server](https://github.com/bigmooon/mongle-server) | 인증·도메인 API·비동기 작업 관리 |
 | AI | **현재 저장소** | LLM/VLM 에이전트와 FastAPI 추론 API |
 
+## 문제 정의와 리서치 근거
+
+기획 단계에서 수집한 외부 조사 결과를 제품 가설과 기능 설계로 연결했습니다. 아래 수치는 자체 설문 결과가 아니라 [`프로젝트 기획서`](https://drive.google.com/file/d/1AT0YGK2BfbWJpBcsvgHfugAlRHEdQTak/view)에 정리한 선행 자료입니다.
+
+| 관찰한 문제 | 조사 결과 | 설계에 반영한 방식 |
+| --- | --- | --- |
+| 시작 자체가 어렵다 | 자기개발을 하지 않는 이유: 귀찮음 **25.8%**, 무엇을 할지 모름 **24.4%**, 시간 부족 **21.7%** | 자연어 목표를 질문으로 구체화하고 실행 가능한 TODO로 분해 |
+| 생산성 앱을 오래 쓰기 어렵다 | 생산성 앱 리텐션: 1일 **32.86% → 30일 9.63%** | TODO를 캐릭터 퀘스트·완료 보상·피드로 연결 |
+| 루틴을 돕는 디지털 수요가 있다 | 루틴 보유자의 챌린지·습관 앱 이용 **21.3%** | 계획·실행·회고가 이어지는 반복 루프 설계 |
+
 ## 사용자 흐름
 
 ```mermaid
-flowchart LR
-    A[애착 인형과 키워드 입력] --> B[캐릭터 이미지·페르소나 생성]
-    C[자연어 목표 입력] --> D[질문으로 목표 구체화]
-    D --> E[날짜별 TODO·태그 생성]
-    E --> F[캐릭터 퀘스트 분배]
-    F --> G[사용자 완료]
-    G --> H[수행 이미지·캡션 생성]
-    H --> I[마을 피드 게시]
+flowchart TB
+    CHARACTER["캐릭터 생성<br/>인형·키워드 → 이미지·페르소나"]
+    PLAN["계획 생성<br/>자연어 목표 → 질문 → TODO·태그"]
+    REWARD["실행과 보상<br/>퀘스트 → 완료 → 이미지·캡션 → 피드"]
+
+    CHARACTER --> PLAN --> REWARD
 ```
+
+## 핵심 검증 결과
+
+제출 당시 보고서의 후보 비교와 학습 결과를 함께 요약했습니다. 서로 다른 평가셋의 결과이므로 동일한 모수처럼 합산하지 않았습니다.
+
+| 검증 범위 | 결과 | 해석 |
+| --- | --- | --- |
+| LLM 후보 비교 | Qwen2.5-7B **3.672 / 5**, 7개 중 2위 | 최고점 하나보다 JSON·한국어·배포 가능성을 함께 본 균형형 후보 |
+| 구조 안정성 | JSON 파싱 **90%**, Schema 준수 **90%**, 한국어 출력 **100%** | 서비스가 저장할 수 있는 형식과 언어 조건을 충족 |
+| 페르소나 QLoRA | 평균 **0.56초** `(n=12)`, 페르소나 반영 **75%**, 길이 준수 **100%**, 비정상 응답 **0%** | 응답 제약과 캐릭터성을 함께 검증 |
+| 이미지 파이프라인 | SSIM **0.6712 → 0.8378** `(+0.1666)`, 객체·색상 인식 **20/20** | LoRA·ControlNet·배경 제거 결합으로 형태 보존 개선 |
+| 플래너 SFT | Gate1 파싱 **100%**, 자동 구조 PASS **78.5%** | 구조화 출력 가능성을 확인했지만 후속 정합성 개선 필요 |
+| 확인된 한계 | 라우팅 정확도 **65%**, plan 정합성 **25%** | plan/follow-up 구분과 날짜·중복 규칙 보강 대상으로 기록 |
+
+근거: [모델 테스트 계획 및 결과](https://drive.google.com/file/d/1tozTGjdvfpLf77Z2kIV1dezihjXp5j8Q/view) · [인공지능 학습 결과](https://drive.google.com/file/d/1HbuCap2QbnE1OPwZdbhJJ3A1_DMbDImX/view)
+
+> 위 수치는 프로젝트 제출 당시 평가 환경의 결과이며, 이후 변경된 모델과 파이프라인의 현재 운영 성능으로 일반화하지 않습니다.
+
+CI workflow는 외부 모델이 필요한 contract 테스트를 제외하고 `agents`, `adapters`, `api` 테스트와 80% 커버리지 게이트를 실행하도록 구성되어 있습니다.
 
 ## 담당한 부분
 
@@ -62,7 +89,7 @@ flowchart LR
 ## 시스템 구조
 
 ```mermaid
-flowchart LR
+flowchart TB
     ENTRY["Service Entry<br/>Web → Django → FastAPI"]
     AGENTS["AI Agents<br/>Character · TODO · Quest<br/>Feed · Reply"]
     PROVIDERS["Models & Storage<br/>Qwen · EXAONE · RunPod · S3"]
@@ -76,27 +103,13 @@ flowchart LR
 
 | 문서 | 확인할 수 있는 내용 |
 | --- | --- |
+| [프로젝트 기획서](https://drive.google.com/file/d/1AT0YGK2BfbWJpBcsvgHfugAlRHEdQTak/view) | 문제 정의, 시장·사용자 리서치와 제품 가설 |
 | [시스템 아키텍처](https://drive.google.com/file/d/15p49ZUIrJCmrSCy3LpU3FbjapZaMXdRc/view) | Web·Server·AI 간 구성과 배포 경계 |
 | [모델 테스트 계획 및 결과](https://drive.google.com/file/d/1tozTGjdvfpLf77Z2kIV1dezihjXp5j8Q/view) | 후보 모델 비교 기준과 평가 결과 |
 | [인공지능 학습 결과](https://drive.google.com/file/d/1HbuCap2QbnE1OPwZdbhJJ3A1_DMbDImX/view) | 학습 과정과 실험 결과 |
 | [AI 데이터 전처리 결과](https://drive.google.com/file/d/1Pxsk397u0joC_Bp-wbrbsc3p86MU6oar/view) | 데이터 정제·가공 과정 |
 
 [전체 프로젝트 산출물 보기](https://drive.google.com/drive/folders/1Lfv49TDbilo4ivoSIpw4v8RDEnEw9quC)
-
-## 평가 결과
-
-아래 수치는 **프로젝트 제출 당시 평가 환경**의 결과입니다. 이후 모델과 파이프라인이 변경되었으므로 현재 운영 성능으로 일반화하지 않습니다.
-
-| 평가 항목 | 결과 |
-| --- | ---: |
-| 7개 LLM 후보 중 Qwen2.5-7B 종합점수 | 3.672 / 5 |
-| JSON / Schema 준수율 | 0.90 / 0.90 |
-| 한국어 출력 비율 | 1.00 |
-| 캐릭터 이미지 SSIM | 0.6712 → 0.8378 |
-| VLM 객체·색상 인식 | 20/20 · 20/20 |
-| 피드 이미지 생성 성공 | 19/20 |
-
-CI workflow는 외부 모델이 필요한 contract 테스트를 제외하고 `agents`, `adapters`, `api` 테스트와 80% 커버리지 게이트를 실행하도록 구성되어 있습니다.
 
 ## 빠른 시작
 
