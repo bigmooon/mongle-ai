@@ -63,16 +63,13 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-    WEB[React + Phaser] --> SERVER[Django REST API]
-    SERVER -->|API key| API[FastAPI AI API]
-    API --> CHAR[Character Agent]
-    API --> TODO[TODO / Planner Agent]
-    API --> QUEST[Quest Agent]
-    API --> FEED[Feed / Reply Agent]
-    CHAR & TODO & QUEST & FEED --> ADAPTER[Provider Adapters]
-    ADAPTER --> RP[RunPod Workers]
-    ADAPTER --> LLM[Qwen / EXAONE Runtime]
-    ADAPTER --> S3[(Amazon S3)]
+    WEB["Web<br/>React · Phaser"]
+    SERVER["Backend<br/>Django REST"]
+    API["AI API<br/>FastAPI"]
+    AGENTS["AI Agents<br/>Character · TODO · Quest · Feed · Reply"]
+    PROVIDERS["Providers & Storage<br/>Qwen · EXAONE · RunPod · Amazon S3"]
+
+    WEB --> SERVER -->|API key| API --> AGENTS --> PROVIDERS
 ```
 
 에이전트는 도메인 검증과 결과 생성을 담당하고, 영속화·카운터·이벤트 발행은 호출자가 담당하도록 경계를 나눴습니다. 자세한 제품·데이터 계약은 [`docs/`](docs/)에서 확인할 수 있습니다.
