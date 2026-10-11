@@ -69,7 +69,7 @@ AI는 사용자의 입력을 서비스에서 활용할 수 있는 생성 결과�
 
 이를 제품에 옮긴 것이 **자연어 목표 → TODO·일정 관리 → 주민 퀘스트 → 완료 보상·주민 피드**입니다. 계획과 기록은 자기관리의 기반을 만들고, 나의 애착 인형으로 만든 주민과 그 주민의 활동 기록은 정서적 연결을 쌓도록 설계했습니다. 몽글마을은 이 둘을 결합해 **할 일을 끝내는 경험이, 내일도 다시 찾아올 이유로 이어지는 자기관리 서비스**를 만들고자 합니다. 실제 효과는 TODO 완료율, 1·7·30일 재방문율, 회고 참여율 등으로 검증할 과제입니다.
 
-화면 구성은 [화면 설계서](https://drive.google.com/file/d/1YtJOZGWTRox2bAD4ejiBRfHChII9syMF/view), 사용 장면은 [시나리오 설계서](https://drive.google.com/file/d/1iEBtXu_PdO8v77O-_BnPvVMfbw2PgwJB/view), 기획과 현재 코드의 차이는 [설계·구현 대조 기록](docs/CROSS_REPOSITORY_REVIEW.md)에서 확인할 수 있습니다.
+화면 구성은 [화면 설계서](https://drive.google.com/file/d/1YtJOZGWTRox2bAD4ejiBRfHChII9syMF/view), 사용 장면은 [시나리오 설계서](https://drive.google.com/file/d/1iEBtXu_PdO8v77O-_BnPvVMfbw2PgwJB/view)에서 확인할 수 있습니다.
 
 <details>
 <summary>추가 리서치와 저장소별 설계 반영</summary>
@@ -202,10 +202,6 @@ Web → Django 경로에는 `/api/v1`을 앞에 붙입니다. 캐릭터의 Serve
 
 관련 코드: [apps/todos/views.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/todos/views.py) · [apps/todos/ai_client.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/todos/ai_client.py) · [apps/characters/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/characters/tasks.py) · [apps/posts/tasks.py](https://github.com/bigmooon/mongle-server/blob/11f428734960dab8db60bc5bc7128fb62e8a495d/apps/posts/tasks.py) · [api/todo_creation/router.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/todo_creation/router.py) · [api/quest_generation/router.py](https://github.com/bigmooon/mongle-ai/blob/8f897687560a6ebf179e3a0894a3bfd05b778efc/api/quest_generation/router.py)
 
-
-## 문서 기준과 변경 이력
-
-README는 2026-10-10에 확인한 코드와 환경 변수 예시, Compose, CI 설정을 기준으로 작성했습니다. 코드 링크는 당시 커밋을 가리킵니다. Drive 설계 자료와 달라진 부분, 확인이 필요한 항목과 검증 내역은 [교차검증 기록](docs/CROSS_REPOSITORY_REVIEW.md)에서 확인할 수 있습니다.
 
 ## 관련 설계 문서
 
