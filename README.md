@@ -168,19 +168,9 @@ Pydantic 입력/출력 모델, 어댑터의 JSON 파싱·스키마 요청, 날�
 
 AI는 Django가 전달한 입력을 구조화된 생성 결과로 반환하고, 설정된 추론·이미지 스토리지 어댑터를 실행합니다.
 
-```mermaid
-flowchart TB
-    WEB["Web<br/>React · Phaser"]
-    SERVER["Server<br/>Django · Celery"]
-    AI["AI<br/>FastAPI · 추론"]
-    DB["관계형 데이터<br/>MySQL"]
-    MEDIA["이미지 객체<br/>S3"]
+![몽글마을 시스템 아키텍처: Web, AWS 백엔드와 데이터 저장소, RunPod AI 서비스 및 배포 경로](docs/images/system-architecture.png)
 
-    WEB -->|제품 API| SERVER
-    SERVER -->|내부 AI API| AI
-    SERVER -->|도메인 저장| DB
-    AI -->|생성 이미지 업로드| MEDIA
-```
+[시스템 아키텍처 원본 크게 보기](docs/images/system-architecture.png)
 
 Web의 AI 기능 요청은 Django를 거쳐 FastAPI로 전달됩니다. 원본 사진은 Django가 발급한 presigned URL로 Web이 S3에 직접 PUT하며, Django는 이미지 키·메타데이터와 캐릭터 생성 감사 JSON을 관리합니다. AI가 결과를 HTTP 응답/폴링 결과로 반환하면 Django가 도메인 DB에 반영합니다. S3는 Web 정적 파일 배포와 사용자 미디어 저장에 각각 사용합니다.
 
